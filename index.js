@@ -80,7 +80,10 @@ async function init() {
     console.log(card);
     await prompt(questions).then(answer => answer.action());
     await Enquirer.prompt(followup).then(answer => {
-        if (!answer.exit) init();
+        if (!answer.exit)
+            init();
+        else
+            console.log("Have a nice day!\n");
     });
 }
 
