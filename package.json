@@ -21,6 +21,9 @@
     "got": "^14.2.1",
     "inquirer": "^9.2.17",
     "open": "^10.1.0",
-    "terminal-image": "^2.0.0"
+    "quantum-circuit": "^0.9.222",
+    "terminal-link": "^3.0.0",
+    "terminal-image": "^1.0.0",
+    "play-sound": "^1.1.6"
   }
 }

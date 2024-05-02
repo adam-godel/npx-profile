@@ -7,15 +7,18 @@ import clear from 'clear'
 import inquirer from 'inquirer'
 import Enquirer from 'enquirer'
 import open from 'open'
-import terminalImage from 'terminal-image';
+import QuantumCircuit from 'quantum-circuit'
+import terminalLink from 'terminal-link'
+import terminalImage from 'terminal-image'
+import playSound from 'play-sound'
 
 const data = {
     name: chalk.bold.green('Adam Godel'),
-    website: chalk.green('adam-godel.github.io'),
+    website: chalk.green(terminalLink('adam-godel.github.io', 'https://adam-godel.github.io')),
     labelWebsite: chalk.white('Website:'),
-    github: chalk.green('github.com/adam-godel'),
+    github: chalk.green(terminalLink('@adam-godel', 'https://github.com/adam-godel')),
     labelGithub: chalk.white('GitHub:'),
-    email: chalk.green('agodel@bu.edu'),
+    email: chalk.green(terminalLink('agodel@bu.edu', 'mailto:agodel@bu.edu')),
     labelEmail: chalk.white('Email:')
 }
 
@@ -55,6 +58,49 @@ const questions = [
                 }
             },
             {
+                name: `Flip an Entangled Coin`,
+                value: async () => {
+                    console.log("The entangled coin is made up of two qubits that always share the same state.");
+                    await new Promise(resolve => setTimeout(resolve, 2500));
+                    process.stdout.write("Preparing to generate quantum circuit");
+                    for (let i = 0; i < 3; i++) {
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        process.stdout.write(".");
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    process.stdout.write("\n");
+
+                    // image and sound, all for show of course :)
+                    console.log(await terminalImage.file('matrix_rain.gif'));
+                    const player = playSound();
+                    player.play('matrix_sound.wav', { timeout: 9500 }, function (err) {
+                        if (err) throw err;
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 9500));
+                    clear();
+                    console.log(card);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // actual initialization of the quantum circuit
+                    var circuit = new QuantumCircuit(2);
+                    circuit.addGate("h", 0, 0);
+                    circuit.addGate("cx", 1, [0, 1]);
+                    console.log("Quantum circuit ready!");
+                    circuit.run();
+                    circuit.print();
+
+                    const response = await prompt({
+                        type: 'input',
+                        name: 'count',
+                        message: 'How many times would you like to flip the coin? (Max 1000)'
+                    });
+                    for (let i = 1; i <= (response.count > 1000 ? 1000 : response.count); i++) {
+                        circuit.run();
+                        console.log("Flip #"+i+": "+circuit.measure(0)+""+circuit.measure(1));
+                    }
+                }
+            },
+            {
                 name: `Exit`,
                 value: () => {
                     console.log("Have a nice day!\n");
@@ -87,4 +133,5 @@ async function init() {
     });
 }
 
+process.removeAllListeners('warning'); // suppress antlr4 warning
 init();
