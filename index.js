@@ -12,6 +12,13 @@ import terminalLink from 'terminal-link'
 import terminalImage from 'terminal-image'
 import playSound from 'play-sound'
 
+import fs from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+import * as path from 'path'
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const data = {
     name: chalk.bold.green('Adam Godel'),
     website: chalk.green(terminalLink('adam-godel.github.io', 'https://adam-godel.github.io')),
@@ -71,9 +78,9 @@ const questions = [
                     process.stdout.write("\n");
 
                     // image and sound, all for show of course :)
-                    console.log(await terminalImage.file('matrix_rain.gif'));
+                    console.log(await terminalImage.file(path.resolve(__dirname, './assets/matrix_rain.gif')));
                     const player = playSound();
-                    player.play('matrix_sound.wav', { timeout: 9500 }, function (err) {
+                    player.play(path.resolve(__dirname, './assets/matrix_sound.wav'), { timeout: 9500 }, function (err) {
                         if (err) throw err;
                     });
                     await new Promise(resolve => setTimeout(resolve, 9500));
