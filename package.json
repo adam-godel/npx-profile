@@ -1,11 +1,10 @@
 {
   "name": "adam-godel",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Adam Godel Profile Card",
   "main": "index.js",
   "type": "module",
   "bin": "./index.js",
-  "files": [],
   "scripts": {
     "setup": "npm install",
     "start": "node index.js"
