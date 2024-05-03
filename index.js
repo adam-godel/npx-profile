@@ -125,15 +125,20 @@ const questions = [
                 name: `Read/Write Values in QRAM`,
                 value: async () => {
                     console.log("Quantum Random Access Memory allows you to use a quantum circuit\nto read and write bit information. This quantum circuit has four\nmemory locations, from 00 to 11, encoded using 10 qubits in total.");
-                    var circuit = new QuantumCircuit(10);
-                    circuit.appendGate("ccx", [9, 3, 7]);
-                    circuit.appendGate("ccx", [9, 2, 6]);
-                    circuit.appendGate("ccx", [9, 1, 5]);
-                    circuit.appendGate("ccx", [9, 0, 4]);
-                    circuit.appendGate("ccx", [3, 7, 8]);
-                    circuit.appendGate("ccx", [2, 6, 8]);
-                    circuit.appendGate("ccx", [1, 5, 8]);
-                    circuit.appendGate("ccx", [0, 4, 8]);
+                    const size = await prompt({
+                        type: 'input',
+                        name: 'count',
+                        message: 'What size would you like the QRAM to be? (Max 12)'
+                    });
+                    if (Number.isNaN(size.count) || size.count <= 0)
+                        return;
+                    const count = size.count > 12 ? 12 : parseInt(size.count);
+
+                    var circuit = new QuantumCircuit(2*count+2);
+                    for (let i = 0; i < count; i++)
+                        circuit.appendGate("ccx", [2*count+1, i, count+i]);
+                    for (let i = 0; i < count; i++)
+                        circuit.appendGate("ccx", [i, count+i, 2*count]);
 
                     while (true) {
                         const select = await prompt({
@@ -143,30 +148,33 @@ const questions = [
                             choices: ['Read', 'Write', 'Quit']
                         });
                         if (select.rw == 'Quit') 
-                            break;
+                            return;
                         const response = await prompt({
-                            type: 'list',
+                            type: 'input',
                             name: 'address',
-                            message: 'Select an address to ' + (select.write ? 'write to' : 'read from'),
-                            choices: ['00', '01', '10', '11']
+                            message: 'Select an address to ' + (select.rw == 'Write' ? 'write to' : 'read from') + ' (' + '0'.repeat(Math.ceil(Math.log2(count))) + ' to ' + (count-1).toString(2) + ')',
                         });
-                        circuit.run([
-                            response.address == '00',
-                            response.address == '01',
-                            response.address == '10',
-                            response.address == '11',
-                            circuit.measure(4),
-                            circuit.measure(5),
-                            circuit.measure(6),
-                            circuit.measure(7),
-                            false,
-                            select.rw == 'Write'
-                        ]);
+                        function validNum(addr) {
+                            for (let i = 2; i <= 9; i++)
+                                if (addr.toString().includes(i))
+                                    return false;
+                            return true;
+                        }
+                        if (Number.isNaN(response.address) || parseInt(response.address, 2) >= count || !validNum(response.address)) {
+                            console.log(chalk.red.bold("Error:") + " Enter an address from " + "0".repeat(Math.ceil(Math.log2(count))) + " to " + (count-1).toString(2) + " in binary!");
+                            continue;
+                        }
 
+                        let qInit = [];
+                        for (let i = 0; i < count; i++)
+                            qInit.push(parseInt(response.address, 2) == i);
+                        for (let i = count; i < 2*count; i++)
+                            qInit.push(circuit.measure(i));
+                        circuit.run(qInit.concat([false, select.rw == 'Write']));
                         if (select.rw == 'Write')
-                            console.log("Applied X gate at address " + response.address + "!");
+                            console.log("Applied X gate at address " + response.address.padStart(Math.ceil(Math.log2(count)), '0') + "!");
                         else
-                            console.log("Address " + response.address + ": " + circuit.measure(8));
+                            console.log("Address " + response.address.padStart(Math.ceil(Math.log2(count)), '0') + ": " + circuit.measure(2*count));
                     }
                 }
             },
