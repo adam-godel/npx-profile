@@ -124,7 +124,7 @@ const questions = [
             {
                 name: `Read/Write Values in QRAM`,
                 value: async () => {
-                    console.log("Quantum Random Access Memory allows you to use a quantum circuit\nto read and write bit information. This quantum circuit has four\nmemory locations, from 00 to 11, encoded using 10 qubits in total.");
+                    console.log("Quantum Random Access Memory allows you to use a quantum circuit\nto read and write bit information. This quantum circuit has up to\n12 memory locations encoded using up to 26 qubits in total.");
                     const size = await prompt({
                         type: 'input',
                         name: 'count',
