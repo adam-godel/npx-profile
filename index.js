@@ -11,8 +11,8 @@ import QuantumCircuit from 'quantum-circuit'
 import terminalLink from 'terminal-link'
 import terminalImage from 'terminal-image'
 import playSound from 'play-sound'
+import cliProgress from 'cli-progress'
 
-import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import * as path from 'path'
@@ -69,26 +69,40 @@ const questions = [
                 value: async () => {
                     console.log("The entangled coin is made up of two qubits that always share the same state.");
                     await new Promise(resolve => setTimeout(resolve, 2500));
-                    process.stdout.write("Preparing to generate quantum circuit");
-                    for (let i = 0; i < 3; i++) {
-                        await new Promise(resolve => setTimeout(resolve, 1500));
-                        process.stdout.write(".");
+                    console.log("Preparing to generate quantum circuit...");
+                    const bar = new cliProgress.Bar({
+                        format: ' >> [\u001b[37m{bar}\u001b[0m] {percentage}%',
+                        barCompleteChar: '\u2588',
+                        barIncompleteChar: '\u2591',
+                        barGlue: '\u001b[90m'
+                    });
+                    bar.start(120, 0);
+                    for (let i = 0; i < 6; i++) {
+                        await new Promise(resolve => setTimeout(resolve, Math.floor((Math.random() * 500) + 500)));
+                        bar.increment(Math.floor((Math.random() * 4) + 20));
                     }
-                    await new Promise(resolve => setTimeout(resolve, 1500));
                     process.stdout.write("\n");
 
                     // image and sound, all for show of course :)
-                    console.log(await terminalImage.file(path.resolve(__dirname, './assets/matrix_rain.gif')));
+                    console.log(await terminalImage.file(path.resolve(__dirname, './assets/AntManQuantumania.gif'), {height: '60%'}));
+                    await new Promise(resolve => setTimeout(resolve, 2000));
                     const player = playSound();
-                    player.play(path.resolve(__dirname, './assets/matrix_sound.wav'), { timeout: 9500 }, function (err) {
+                    player.play(path.resolve(__dirname, './assets/AntManQuantumania.mp3'), function (err) {
                         if (err) throw err;
                     });
-                    await new Promise(resolve => setTimeout(resolve, 9500));
-                    clear();
-                    console.log(card);
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    console.log("Generating quantum circuit...");
+                    bar.start(14000, 0);
+                    const times = [221, 273, 561, 701, 744, 763, 899, 665, 741, 977, 996, 854, 752, 827, 753, 782, 822, 819, 797, 53];
+                    for (let i = 0; i < times.length; i++) {
+                        await new Promise(resolve => setTimeout(resolve, times[i]));
+                        bar.increment(times[i+1 < times.length ? i+1 : 0]);
+                    }
+                    process.stdout.write("\n");
+                    await new Promise(resolve => setTimeout(resolve, 2000));
                     
                     // actual initialization of the quantum circuit
+                    clear();
+                    console.log(card);
                     var circuit = new QuantumCircuit(2);
                     circuit.addGate("h", 0, 0);
                     circuit.addGate("cx", 1, [0, 1]);
@@ -133,10 +147,12 @@ async function init() {
     console.log(card);
     await prompt(questions).then(answer => answer.action());
     await Enquirer.prompt(followup).then(answer => {
-        if (!answer.exit)
+        if (!answer.exit) {
             init();
-        else
+        } else {
             console.log("Have a nice day!\n");
+            process.exit();
+        }
     });
 }
 
