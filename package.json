@@ -14,7 +14,7 @@
     "url": "https://github.com/adam-godel/npx-profile.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Adam Godel",
   "license": "ISC",
   "dependencies": {
     "boxen": "^7.1.1",
