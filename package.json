@@ -1,6 +1,6 @@
 {
   "name": "adam-godel",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Adam Godel Profile Card",
   "main": "index.js",
   "type": "module",
@@ -8,6 +8,10 @@
   "scripts": {
     "setup": "npm install",
     "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adam-godel/npx-profile.git"
   },
   "keywords": [],
   "author": "",
