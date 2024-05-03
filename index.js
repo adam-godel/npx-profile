@@ -140,6 +140,15 @@ const questions = [
                     for (let i = 0; i < count; i++)
                         circuit.appendGate("ccx", [i, count+i, 2*count]);
 
+                    console.log("QRAM for " + count + " addresses using " + (2*count+2) + " qubits")
+                    for (let i = 0; i < count; i++)
+                        console.log(((i < 10 && count >= 5) ? ' ' : '') + 'q' + i + ' ' + '---'.repeat(count-1-i) + '-⏺-' + '-|-'.repeat(i) + '-' + '---'.repeat(count-1-i) + '-⏺-' + '-|-'.repeat(i) + '---');
+                    for (let i = 0; i < count; i++)
+                        console.log(((count+i < 10 && count >= 5) ? ' ' : '') + 'q' + (count+i) + ' ' + '-|-'.repeat(count-1-i) + '-⦻-' + '-|-'.repeat(i) + '-' + '-|-'.repeat(count-1-i) + '-⏺-' + '-|-'.repeat(i) + '---');
+                    console.log('q' + (2*count) + ' ' + '-|-'.repeat(count) + '-' + '-⦻-'.repeat(count) + '-⦨-');
+                    console.log('q' + (2*count+1) + ' ' + '-⏺-'.repeat(count) + '---'.repeat(count) + '--|-');
+                    console.log((count >= 5 ? '  ' : ' ') + 'c ' + '---'.repeat(2*count) + '--⏷-');
+
                     while (true) {
                         const select = await prompt({
                             type: 'list',
@@ -152,7 +161,7 @@ const questions = [
                         const response = await prompt({
                             type: 'input',
                             name: 'address',
-                            message: 'Select an address to ' + (select.rw == 'Write' ? 'write to' : 'read from') + ' (' + '0'.repeat(Math.ceil(Math.log2(count))) + ' to ' + (count-1).toString(2) + ')',
+                            message: 'Select an address to ' + (select.rw == 'Write' ? 'write to' : 'read from') + ' (' + '0'.repeat(Math.ceil(Math.log2(count)) > 0 ? Math.ceil(Math.log2(count)) : 1) + ' to ' + (count-1).toString(2) + ')',
                         });
                         function validNum(addr) {
                             for (let i = 2; i <= 9; i++)
@@ -161,7 +170,7 @@ const questions = [
                             return true;
                         }
                         if (Number.isNaN(response.address) || parseInt(response.address, 2) >= count || !validNum(response.address)) {
-                            console.log(chalk.red.bold("Error:") + " Enter an address from " + "0".repeat(Math.ceil(Math.log2(count))) + " to " + (count-1).toString(2) + " in binary!");
+                            console.log(chalk.red.bold("Error:") + " Enter an address from " + "0".repeat(Math.ceil(Math.log2(count)) > 0 ? Math.ceil(Math.log2(count)) : 1) + " to " + (count-1).toString(2) + " in binary!");
                             continue;
                         }
 
