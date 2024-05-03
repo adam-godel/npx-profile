@@ -43,7 +43,7 @@ const card = boxen(
         borderStyle: 'double',
         borderColor: 'green'
     }
-)
+);
 
 const questions = [
     {
@@ -104,10 +104,10 @@ const questions = [
                     clear();
                     console.log(card);
                     var circuit = new QuantumCircuit(2);
-                    circuit.addGate("h", 0, 0);
-                    circuit.addGate("cx", 1, [0, 1]);
-                    console.log("Quantum circuit ready!");
+                    circuit.appendGate("h", 0);
+                    circuit.appendGate("cx", [0, 1]);
                     circuit.run();
+                    console.log("Quantum circuit ready!");
                     circuit.print();
 
                     const response = await prompt({
@@ -118,6 +118,67 @@ const questions = [
                     for (let i = 1; i <= (response.count > 1000 ? 1000 : response.count); i++) {
                         circuit.run();
                         console.log("Flip #"+i+": "+circuit.measure(0)+""+circuit.measure(1));
+                    }
+                }
+            },
+            {
+                name: `Read/Write Values in QRAM`,
+                value: async () => {
+                    console.log("Quantum Random Access Memory allows you to use a quantum circuit\nto read and write bit information. This quantum circuit has four\nmemory locations, from 00 to 11, encoded using 10 qubits in total.");
+                    var circuit = new QuantumCircuit(10);
+                    circuit.appendGate("ccx", [9, 3, 7]);
+                    circuit.appendGate("ccx", [9, 2, 6]);
+                    circuit.appendGate("ccx", [9, 1, 5]);
+                    circuit.appendGate("ccx", [9, 0, 4]);
+                    circuit.appendGate("ccx", [3, 7, 8]);
+                    circuit.appendGate("ccx", [2, 6, 8]);
+                    circuit.appendGate("ccx", [1, 5, 8]);
+                    circuit.appendGate("ccx", [0, 4, 8]);
+
+                    let cont = true;
+                    while (cont) {
+                        const select = await Enquirer.prompt([{
+                            type: "toggle",
+                            name: "write",
+                            message: "Select an action",
+                            enabled: 'Write',
+                            disabled: 'Read',
+                            default: false
+                        }]);
+                        const response = await prompt({
+                            type: 'list',
+                            name: 'address',
+                            message: 'Select an address to ' + (select.write ? 'write to' : 'read from'),
+                            choices: ['00', '01', '10', '11']
+                        });
+                        circuit.run([
+                            response.address == '00',
+                            response.address == '01',
+                            response.address == '10',
+                            response.address == '11',
+                            circuit.measure(4),
+                            circuit.measure(5),
+                            circuit.measure(6),
+                            circuit.measure(7),
+                            false,
+                            select.write
+                        ]);
+                        
+                        if (select.write)
+                            console.log("Applied X gate at address " + response.address + "!");
+                        else
+                            console.log("Address " + response.address + ": " + circuit.measure(8));
+                        await Enquirer.prompt([{
+                            type: "toggle",
+                            name: "exit",
+                            message: "Continue?",
+                            enabled: 'No',
+                            disabled: 'Yes',
+                            default: false
+                        }]).then(answer => {
+                            if (answer.exit)
+                                cont = false;
+                        });
                     }
                 }
             },
@@ -138,9 +199,11 @@ const followup = [
         type: "toggle",
         name: "exit",
         message: "Exit?",
+        enabled: 'Yes',
+        disabled: 'No',
         default: false
     }
-]
+];
 
 async function init() {
     clear();
