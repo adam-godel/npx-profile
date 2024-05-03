@@ -135,16 +135,15 @@ const questions = [
                     circuit.appendGate("ccx", [1, 5, 8]);
                     circuit.appendGate("ccx", [0, 4, 8]);
 
-                    let cont = true;
-                    while (cont) {
-                        const select = await Enquirer.prompt([{
-                            type: "toggle",
-                            name: "write",
-                            message: "Select an action",
-                            enabled: 'Write',
-                            disabled: 'Read',
-                            default: false
-                        }]);
+                    while (true) {
+                        const select = await prompt({
+                            type: 'list',
+                            name: 'rw',
+                            message: 'Select an action',
+                            choices: ['Read', 'Write', 'Quit']
+                        });
+                        if (select.rw == 'Quit') 
+                            break;
                         const response = await prompt({
                             type: 'list',
                             name: 'address',
@@ -161,24 +160,13 @@ const questions = [
                             circuit.measure(6),
                             circuit.measure(7),
                             false,
-                            select.write
+                            select.rw == 'Write'
                         ]);
-                        
-                        if (select.write)
+
+                        if (select.rw == 'Write')
                             console.log("Applied X gate at address " + response.address + "!");
                         else
                             console.log("Address " + response.address + ": " + circuit.measure(8));
-                        await Enquirer.prompt([{
-                            type: "toggle",
-                            name: "exit",
-                            message: "Continue?",
-                            enabled: 'No',
-                            disabled: 'Yes',
-                            default: false
-                        }]).then(answer => {
-                            if (answer.exit)
-                                cont = false;
-                        });
                     }
                 }
             },
