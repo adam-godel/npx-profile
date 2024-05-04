@@ -21,7 +21,7 @@ const __dirname = dirname(__filename);
 
 const data = {
     name: chalk.bold.green('Adam Godel'),
-    website: chalk.green(terminalLink('adam-godel.github.io', 'https://adam-godel.github.io')),
+    website: chalk.green(terminalLink('adamgodel.me', 'https://adamgodel.me')),
     labelWebsite: chalk.white('Website:'),
     github: chalk.green(terminalLink('@adam-godel', 'https://github.com/adam-godel')),
     labelGithub: chalk.white('GitHub:'),
