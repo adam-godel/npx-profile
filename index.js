@@ -11,9 +11,9 @@ import terminalLink from 'terminal-link'
 import terminalImage from 'terminal-image'
 import playSound from 'play-sound'
 import cliProgress from 'cli-progress'
-import figlet from 'figlet'
 import lolcatjs from 'lolcatjs'
 
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import * as path from 'path'
@@ -55,28 +55,18 @@ const questions = [
             {
                 name: `About Me`,
                 value: () => {
-                    console.log("My name is Adam Godel and I am a first-year student studying\nmathematics and computer science at Boston University. While\nI am interested in a multitude of CS topics, my recent research\ninterest has been quantum computing. Feel free to contact me or\nlook at my projects on GitHub!\n");
+                    console.log("My name is Adam Godel and I am a first-year student studying\nmathematics and computer science at Boston University. While\nI am interested in a multitude of CS topics, my recent research\ninterest has been quantum computing. Feel free to contact me or\nlook at my projects on GitHub!");
                 }
             },
             {
                 name: `My Signature`,
                 value: async () => {
-                    figlet("adam godel", 
-                    { 
-                        font: "3D Diagonal", 
-                        horizontalLayout: "default",
-                        verticalLayout: "default",
-                        width: 75,
-                        whitespaceBreak: true 
-                    }, function (err, data) {
-                        if (err) {
-                          console.error(err);
-                          return;
-                        }
+                    fs.readFile(path.resolve(__dirname, './assets/signature.txt'), 'utf8', function (err, data) {
+                        if (err) throw err;
                         lolcatjs.options.seed = 612;
                         lolcatjs.fromString(data);
                     });
-                    await new Promise(resolve => setTimeout(resolve, 10)); // to keep followup message after figlet
+                    await new Promise(resolve => setTimeout(resolve, 10)); // to keep followup message after fs
                 }
             },
             {
