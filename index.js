@@ -6,12 +6,13 @@ import boxen from 'boxen'
 import clear from 'clear'
 import inquirer from 'inquirer'
 import Enquirer from 'enquirer'
-import open from 'open'
 import QuantumCircuit from 'quantum-circuit'
 import terminalLink from 'terminal-link'
 import terminalImage from 'terminal-image'
 import playSound from 'play-sound'
 import cliProgress from 'cli-progress'
+import figlet from 'figlet'
+import lolcatjs from 'lolcatjs'
 
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
@@ -58,10 +59,24 @@ const questions = [
                 }
             },
             {
-                name: `Contact Me`,
-                value: () => {
-                    open("mailto:agodel@bu.edu");
-                    console.log("Looking forward to responding to your message!\n");
+                name: `My Signature`,
+                value: async () => {
+                    figlet("adam godel", 
+                    { 
+                        font: "3D Diagonal", 
+                        horizontalLayout: "default",
+                        verticalLayout: "default",
+                        width: 75,
+                        whitespaceBreak: true 
+                    }, function (err, data) {
+                        if (err) {
+                          console.error(err);
+                          return;
+                        }
+                        lolcatjs.options.seed = 612;
+                        lolcatjs.fromString(data);
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 10)); // to keep followup message after figlet
                 }
             },
             {
