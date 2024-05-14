@@ -174,7 +174,7 @@ const questions = [
                                     return false;
                             return true;
                         }
-                        if (Number.isNaN(response.address) || parseInt(response.address, 2) >= count || !validNum(response.address)) {
+                        if (isNaN(response.address) || parseInt(response.address, 2) >= count || !validNum(response.address)) {
                             console.log(chalk.red.bold("Error:") + " Enter an address from " + "0".repeat(Math.ceil(Math.log2(count)) > 0 ? Math.ceil(Math.log2(count)) : 1) + " to " + (count-1).toString(2) + " in binary!");
                             continue;
                         }
