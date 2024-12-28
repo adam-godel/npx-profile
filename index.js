@@ -55,7 +55,7 @@ const questions = [
             {
                 name: `About Me`,
                 value: () => {
-                    console.log("My name is Adam Godel and I am studying mathematics and computer science\nat Boston University. While I am interested in a multitude of CS topics,\nmy main research interest is quantum computing. Feel free to contact me or\nlook at my projects on GitHub!");
+                    console.log("My name is Adam Godel and I am studying mathematics and computer science\nat Boston University. While I am interested in a multitude of topics\nwithin my major, my main interests are quantum computing and web\ndevelopment. Feel free to contact me or look at my projects on GitHub!");
                 }
             },
             {
